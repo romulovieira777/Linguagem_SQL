@@ -1,58 +1,55 @@
-create table empregado (
-	pnome varchar(45) not null,
-    minicial char(1) not null,
-    unome varchar(30) not null,
-    ssn varchar(11) not null,
-    datanasc date not null,
-    endereco varchar(150) not null,
-    sexo char(1) not null,
-    salario decimal(12,2) not null,
-    superssn varchar(11) not null,
-    dno char(4) not null,
-    constraint pkEmpregado primary key (ssn),
-    constraint fkEmpregado foreign key (superssn) references empregado (ssn)
+create table departamento (
+	dnome varchar(45) not null,
+    dnumero int auto_increment primary key not null,
+    gerssn int,
+    gerdatainicio date
 );
 
-create table departamento (
-	dnome varchar(50) not null,
-    dnumero int not null,
-    gerssn varchar(11) not null,
-    gerdatainicio date not null,
-    primary key pkDepartamento (dnumero),
-    constraint fkDepartamento foreign key (gerssn) references empregado (ssn)
+	create table empregado (
+	ssn int auto_increment primary key not null,
+	pnome varchar(50) not null,
+    minicial varchar(15) not null,
+    unome varchar(15) not null,
+    datanasc date not null,
+    endereco varchar(150) not null,
+    sexo tinyint(1) not null,
+    salario decimal(9,2) not null default 0,
+    superssn int,
+    dno varchar(20) not null,
+    foreign key fkEmp_depa (dno) references departamento (dnumero)
+);
+
+alter table  departamento
+add foreign key fkDep_emp (gerssn) references empregado (ssn);
+
+create table dependente (
+	essn int not null,
+    idDep int not null,
+    nome_dependente varchar(45) not null,
+    sexo tinyint(1) not null,
+    datanasc date not null,
+    parentesco varchar(40) not null,
+    primary key pkDependente (essn, idDep),
+    foreign key fkDep_empr (ssn) references empregado (ssn)
 );
 
 create table depto_localizacoes (
 	Dnumero int not null,
-    dlocalizacao varchar(30) not null,
-    primary key pkDepto_localizacoes (dnumero, dlocalizacao),
-    constraint fkDepto_localizacoes foreign key (dnumero) references departamento (dnumero)
+    dlocalizacao varchar(50) not null,
+    primary key pkDeptoLocal (dnumero, dlocalizacao)    
 );
 
 create table projeto (
-	pjnome varchar(40) not null,
-    pnumero int not null,
-    plocalizacao varchar(30) not null,
+	pjnome varchar(50) not null,
+    pnumero int auto_increment primary key not null,
+    plocalizacao varchar(50) not null,
     dnum int not null,
-    primary key pkProjeto (pnumero),
-    constraint fkProjeto foreign key (dnum) references Departamento (dnumero)
+    constraint fkProjeto_Dep foreign key (dnum) references departamento (dnumero)
 );
 
 create table trabalha_em (
-	essn varchar(40) not null,
-    pno varchar(30) not null,
-    horas decimal(4,2) not null,
-    primary key pkTrabalha_em (essn, pno),
-    constraint fkTrabalha_em foreign key (pno) references projeto (pnumero)
+	essn int not null,
+    pno int not null,
+    horas decimal(6,2) default 0,
+    primary key pkTrab (ssn, pno)
 );
-
-create table dependente (
-	essn varchar(40) not null,
-    nome_dependente varchar(100) not null,
-    sexo char(1) not null,
-    datanasc date not null,
-    parentesco varchar(50) not null,
-    primary key pkDependente (essn, nome_dependente),
-    constraint fkDependente foreign key (essn) references empregado (ssn)
-);
-
